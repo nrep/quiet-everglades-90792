@@ -14,19 +14,19 @@
         <!-- Site Properties -->
         <title id="title"> Article - Sobanuka </title>
 
-        <script src="../scripts/jquery.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="../libs/semantic-ui-css/semantic.css">
+        <script src="scripts/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.css">
     
         <script src="scripts/transition.js"></script>
-        <script src="scripts/vue.js"></script>
-        <script src="scripts/feathers.js"></script>
+        <script src="scripts/vue.min.js"></script>
+        <script src="scripts/feathers.min.js"></script>
         <script src="scripts/socket.io/socket.io.js"></script>
         <script src="scripts/core.min.js"></script>
-        <script src="scripts/marked.js"></script>
-        <script src="scripts/caman.js"></script>
+        <script src="scripts/marked.min.js"></script>
+        <script src="scripts/caman.min.js"></script>
         <style>
             #article {
-                width: 68%;
+                width: 75%;
                 margin-top: 5rem;
             }
             #blog-post-title {
@@ -62,7 +62,7 @@
                 margin-left: 1rem;
             }
             #header-image {
-                max-height: 30rem;
+                max-height: 40rem;
             }
             .ui.card {
                 box-shadow: 0px 0px 8px 0px grey;
@@ -137,21 +137,11 @@
             strong em {
                 color: #3939C7;
             }
-            #before-comments {
-                margin-left: 1rem;
-                width: 66%;
-            }
             #comments {
                 margin-bottom: 2rem;
                 margin-top: 1rem;
-                width: 68%;
+                width: 75%;
                 padding: 1rem;
-            }
-            #before-comments {
-                font-size: 1em;
-                word-spacing: 0.5em;
-                font-weight: 590;
-                letter-spacing: .05em;
             }
             .ui.form {
                 margin-top: 1rem;
@@ -175,8 +165,8 @@
             }
             #aside {
                 position: fixed;
-                left: 69.25%;
-                bottom: 35%;
+                left: 76.25%;
+                bottom: 39%;
             }
             #actions {
                 margin-bottom: .75rem;
@@ -196,7 +186,7 @@
                 width: 100%;
             }
             #engage-users {
-                width: 68%;
+                width: 75%;
                 font-size: 1.1em;
             }
             a.play-store-btn img {
@@ -208,6 +198,9 @@
             }
             #body hr {
                 border-color: rgba(255, 255, 255, 0.7);
+            }
+            #nav {
+                min-height: 4rem;
             }
         </style>
         <script>
@@ -230,6 +223,11 @@
             }
             (document, 'script', 'facebook-jssdk'));
         </script>
+        <script type="text/javascript">
+            var infolinks_pid = 3048885;
+            var infolinks_wsid = 0;
+        </script>
+        <script type="text/javascript" src="http://resources.infolinks.com/js/infolinks_main.js"></script>
     </head>
     <body>
         <!-- Sidebar Menu -->
@@ -331,12 +329,23 @@
                         </form>
                     </div>
                 </div>
-                <div id="aside">
-                    <div class="ui medium rectangle test ad" data-text="Medium Rectangle"></div>
-                    <br>
-                    <div class="ui banner test ad" id="banner" data-text="Banner"></div>
-                </div>
             </main>
+            <div id="aside">
+                <div class="ui medium rectangle ad" data-text="Medium Rectangle">
+                    <script type="text/javascript">
+                        (function() {
+                          if (window.CHITIKA === undefined) { window.CHITIKA = { 'units' : [] }; };
+                          var unit = {"calltype":"async[2]","publisher":"nrep","width":300,"height":250,"sid":"Chitika Default"};
+                          var placement_id = window.CHITIKA.units.length;
+                          window.CHITIKA.units.push(unit);
+                          document.write('<div id="chitikaAdBlock-' + placement_id + '"></div>');
+                        }());
+                      </script>
+                      <script type="text/javascript" src="//cdn.chitika.net/getads.js" async></script>
+                </div>
+                <br>
+                <div class="ui banner test ad" id="banner" data-text="Banner"></div>
+            </div>
             <!--- Footer content -->
             <footer class="ui inverted vertical footer segment" id="footer">
                 <div class="ui container">
@@ -394,7 +403,7 @@
             }
 
             // Initialize socket
-            const socket = io('http://localhost:3030');
+            const socket = io();
             // Initialize the client
             const client = feathers()
                 .configure(feathers.hooks())
@@ -476,7 +485,6 @@
                     }
                 },
                 updated: function() {
-                    //document.getElementById('before-comments-content'). innerHTML = marked(vm.beforeComments);
                     document.querySelector('title').innerText = this.article.title;
                     const meta = document.querySelectorAll('meta');
                     meta.item(3).setAttribute('content', document.URL);

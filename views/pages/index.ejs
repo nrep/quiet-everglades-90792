@@ -12,24 +12,24 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="apple-mobile-web-app-title" content="App Title">
-        <link rel="apple-touch-icon" href="/images/touch-icon.png">
+        <link rel="apple-touch-icon" href="images/touch-icon.png">
         <meta name="mobile-web-app-capable" content="yes">
         <link rel="icon" sizes="192x192" href="images/web_hi_res_512.png">
         <meta name="layoutmode" content="fitscreen"><!-- For UC Browser Mobile -->
 
         <title> Sobanuka </title>
 
-        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.css">
+        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.min.css">
         
         <script src="scripts/jquery.min.js"></script>
         <script src="scripts/iframe-content.js"></script>
-        <script src="libs/semantic-ui-css/semantic.js"></script>
-        <script src="scripts/vue.js"></script>
-        <script src="scripts/feathers.js"></script>
+        <script src="libs/semantic-ui-css/semantic.min.js"></script>
+        <script src="scripts/vue.min.js"></script>
+        <script src="scripts/feathers.min.js"></script>
         <script src="scripts/socket.io/socket.io.js"></script>
         <script src="scripts/core.min.js"></script>
-        <script src="scripts/marked.js"></script>
-        <script src="scripts/caman.js"></script>
+        <script src="scripts/marked.min.js"></script>
+        <script src="scripts/caman.min.js"></script>
         <style>
             #nav,
             #footer {
@@ -41,7 +41,7 @@
                 margin-bottom: 3rem;
             }
             a.ui.card img {
-                max-height: 13rem;
+                max-height: 16rem;
             }
             a.ui.card {
                 box-shadow: 0px 0px 8px 0px;
@@ -51,6 +51,9 @@
             }
             a.ui.card > div.content > div.header {
                 font-size: .9rem !important;
+            }
+            #nav {
+                min-height: 4rem;
             }
         </style>
     </head>
@@ -91,7 +94,7 @@
         <div class="pusher">
             <main class="ui main container" id="main" role="main">
                 <div id="news">
-                    <div class="ui three cards">
+                    <div class="ui four cards">
                         <a class="ui card" v-for="article of articles" v-on:click="viewArticle(article)">
                             <img v-bind:src="'uploads/' + (article.titlePic.split('.').reduce((prev, next) => prev + 'home' + '.' + next))">
                             <div class=" ui image"></div>
@@ -178,7 +181,7 @@
         <script>
 
             // Initialize socket
-            const socket = io('http://localhost:3030');
+            const socket = io('https://thawing-refuge-81916.herokuapp.com');
             // Initialize the client
             const client = feathers()
                 .configure(feathers.hooks())
