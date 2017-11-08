@@ -20,6 +20,7 @@
         <title> Sobanuka </title>
 
         <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="styles/loaders.min.css">
         
         <script src="scripts/jquery.min.js"></script>
         <script src="scripts/iframe-content.js"></script>
@@ -54,6 +55,9 @@
             }
             #nav {
                 min-height: 4rem;
+            }
+            .ball-scale-multiple > div {
+                background-color: blue;
             }
         </style>
     </head>
@@ -127,6 +131,11 @@
                         </a>
                     </div>
                 </div>
+                <div class="loader-inner ball-scale-multiple">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
             </main>
             <footer class="ui inverted vertical footer segment" id="footer">
                 <div class="ui container">
@@ -181,7 +190,7 @@
         <script>
 
             // Initialize socket
-            const socket = io('https://thawing-refuge-81916.herokuapp.com');
+            const socket = io();
             // Initialize the client
             const client = feathers()
                 .configure(feathers.hooks())
