@@ -24,6 +24,7 @@
         <script src="scripts/core.min.js"></script>
         <script src="scripts/marked.min.js"></script>
         <script src="scripts/caman.min.js"></script>
+        <script src="scripts/emergence.js"></script>
         <style>
             #article {
                 width: 75%;
@@ -60,6 +61,7 @@
             }
             #main {
                 margin-left: 1rem;
+                position: relative;
             }
             #header-image {
                 max-height: 40rem;
@@ -201,6 +203,9 @@
             }
             #nav {
                 min-height: 4rem;
+            }
+            #footer[data-emergence=visible] {
+                background-color: black;
             }
         </style>
         <script>
@@ -347,7 +352,7 @@
                 <div class="ui banner test ad" id="banner" data-text="Banner"></div>
             </div>
             <!--- Footer content -->
-            <footer class="ui inverted vertical footer segment" id="footer">
+            <footer class="ui inverted vertical footer segment" id="footer" data-emergence="hidden">
                 <div class="ui container">
                     <div class="ui stackable inverted divided equal height stackable grid">
                         <div class="three wide column">
@@ -502,6 +507,8 @@
                             console.log("Done!");
                         });
                     });
+
+                    emergence.init();
                 }
             });
         </script>
