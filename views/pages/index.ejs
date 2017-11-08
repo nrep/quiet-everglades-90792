@@ -59,6 +59,49 @@
             .ball-scale-multiple > div {
                 background-color: blue;
             }
+
+            @media only screen and (max-height: 662px) {
+                a.ui.card img {
+                    max-height: 10rem;
+                }
+                a.ui.card div.content div.description {
+                    margin-bottom: -1rem;
+                }
+            }
+
+            #loader {
+                padding-top: 25.5%;
+                padding-bottom: 25%;
+                padding-left: 50%;
+            }
+            #loading {
+                padding-top: 3rem;
+                margin-left: -2rem;
+            }
+
+            @media only screen and (max-width: 414px) {
+                a.ui.card img {
+                    max-height: 16rem;
+                }
+                a.ui.card div.content div.description {
+                    margin-bottom: -1rem;
+                }
+                a.ui.card {
+                    min-width: 96%;
+                }
+                a.ui.card > div.content > div.header {
+                    font-size: 1.1rem !important;
+                }
+                a.ui.card > div.extra.content > span {
+                    font-size: 1.2rem !important;
+                }
+            }
+
+            @media only screen and (width: 768px) {
+                #news {
+                    margin-left: 4rem;
+                }
+            }
         </style>
     </head>
     <body>
@@ -84,7 +127,7 @@
         <!--- Navigation bar -->
         <div class="ui inverted blue fixed menu" id="nav">
             <span class="toc item">
-                <a href="/">
+                <a href="#">
                     <i id="sidebar-icon" class="sidebar icon"></i>
                     Sobanuka
                 </a>
@@ -97,8 +140,16 @@
         </div>
         <div class="pusher">
             <main class="ui main container" id="main" role="main">
-                <div id="news">
-                    <div class="ui four cards">
+                <div id="loader">
+                    <div class="loader-inner ball-scale-multiple">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div id="loading">Loading...</div>
+                </div>
+                <div id="news" style="display:none">
+                    <div class="ui cards" id="cards">
                         <a class="ui card" v-for="article of articles" v-on:click="viewArticle(article)">
                             <img v-bind:src="'uploads/' + (article.titlePic.split('.').reduce((prev, next) => prev + 'home' + '.' + next))">
                             <div class=" ui image"></div>
@@ -111,7 +162,12 @@
                                 </div>
                             </div>
                             <div class="extra content">
-                                <span class="share">
+                                <span>
+                                    <span v-bind:class="article.topics[0].color" class="ui label">
+                                        {{ article.topics[0].message }}
+                                    </span>
+                                </span>
+                                <span  class="right floated created">
                                     <span>
                                         <i class="like icon"></i>
                                         {{ article.likes }}
@@ -122,19 +178,9 @@
                                         {{ article.comments.length }}
                                     </span>
                                 </span>
-                                <span class="right floated created">
-                                    <span v-bind:class="article.topics[0].color" class="ui label">
-                                        {{ article.topics[0].message }}
-                                    </span>
-                                </span>
                             </div>
                         </a>
                     </div>
-                </div>
-                <div class="loader-inner ball-scale-multiple">
-                    <div></div>
-                    <div></div>
-                    <div></div>
                 </div>
             </main>
             <footer class="ui inverted vertical footer segment" id="footer">
@@ -188,7 +234,6 @@
             </footer>
         </div>
         <script>
-
             // Initialize socket
             const socket = io();
             // Initialize the client
@@ -196,9 +241,13 @@
                 .configure(feathers.hooks())
                 .configure(feathers.socketio(socket));
 
-            socket.emit('posts::find', (error, results) => {
-                vm.articles = results.data;
-                console.log(results)
+            socket.on('connect', () => {
+                document.getElementById('loading').innerText = 'Fetching...';
+                socket.emit('posts::find', (error, results) => {
+                    document.getElementById('loading').innerText = 'Fetching finished';
+                    vm.articles = results.data;
+                    console.log(results);
+                });
             });
 
             const vm = new Vue({
@@ -212,8 +261,18 @@
                         window.localStorage.setItem('sobanuka-article-id', _id);
                         window.location.assign('/article');
                     }
+                },
+                beforeUpdate: function() {
+                    document.getElementById('loading').innerText = 'Rendering';
+                },
+                updated: function() {
+                    document.getElementById('loading').innerText = 'Rendering finished';
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('news').style.display = '';
                 }
             });
+
+            setTimeout(() => console.log('2 seconds'), 2000);
         </script>
     </body>
 </html>
