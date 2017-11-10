@@ -1,8 +1,8 @@
 {
   "name": "sobanuka",
   "description": "Blog",
-  "version": "0.4.0",
-  "homepage": "",
+  "version": "0.5.0",
+  "homepage": "http://quiet-everglades-90792.herokuapp.com",
   "main": "src",
   "keywords": [
     "feathers"
