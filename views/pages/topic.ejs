@@ -8,14 +8,14 @@
 
         <!-- Site Properties -->
         <title>News - Sobanuka</title>
-        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.css">
+        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.min.css"/>
 
         <!--- Example Libs -->
         <script src="scripts/jquery.min.js"></script>
         <script src="scripts/iframe-content.js"></script>
-        <script src="libs/semantic-ui-css/semantic.js"></script>
-        <script src="scripts/vue.js"></script>
-        <script src="scripts/feathers.js"></script>
+        <script src="libs/semantic-ui-css/semantic.min.js"></script>
+        <script src="scripts/vue.min.js"></script>
+        <script src="scripts/feathers.min.js"></script>
         <script src="scripts/socket.io/socket.io.js"></script>
     </head>
     <style>
@@ -287,13 +287,15 @@
                     articles: [],
                 },
                 methods: {
-                    viewArticle: function({ _id }) {
+                    viewArticle: function viewArticle(article) {
                         window.localStorage.removeItem('sobanuka-article-id');
-                        window.localStorage.setItem('sobanuka-article-id', _id);
-                        window.location.assign('/article');
+                        window.localStorage.setItem('sobanuka-article-id', article._id);
+                        Cookies.remove('current-sobanuka-article-id');
+                        Cookies.set('current-sobanuka-article-id', article._id);
+                        window.location.assign(`/article?title=${article.title}&id=${article._id}&utm_source=${'topics'}`);
                     }
                 },
-                updated: function() {
+                updated: function updated() {
                     const postTitles = document.querySelectorAll('.author');
                     for (postTitle of postTitles) {
                         postTitle.setAttribute('href', encodeURI(`/article?name=${postTitle.innerText.toLowerCase()}&id=${postTitle.getAttribute('id')}`));

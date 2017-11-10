@@ -15,7 +15,7 @@
         <title id="title"> Article - Sobanuka </title>
 
         <script src="scripts/jquery.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.css">
+        <link rel="stylesheet" type="text/css" href="libs/semantic-ui-css/semantic.min.css">
     
         <script src="scripts/transition.js"></script>
         <script src="scripts/vue.min.js"></script>
@@ -24,7 +24,8 @@
         <script src="scripts/core.min.js"></script>
         <script src="scripts/marked.min.js"></script>
         <script src="scripts/caman.min.js"></script>
-        <script src="scripts/emergence.js"></script>
+        <script src="scripts/emergence.min.js"></script>
+        <script src="scripts/js.cookie.js"></script>
         <style>
             #article {
                 width: 75%;
@@ -42,7 +43,7 @@
                 margin-left: 1rem;
                 margin-right: 1rem;
                 margin-bottom: 1rem;
-                font-family: Lato;
+                font-family: Fontin;
             }
             #body {
                 font-size: 1.35em;
@@ -68,10 +69,6 @@
             }
             .ui.card {
                 box-shadow: 0px 0px 8px 0px grey;
-            }
-            #author-name {
-                position: relative;
-                bottom: 1rem;
             }
             #tags-view span {
                 margin-right: .25rem;
@@ -207,32 +204,59 @@
             #footer[data-emergence=visible] {
                 background-color: black;
             }
-        </style>
-        <script>
-            window.fbAsyncInit = function() {
-                FB.init({
-                    appId: '126825084550011',
-                    cookie: true,
-                    xfbml: true,
-                    version: '2.9'
-                });
-                FB.AppEvents.logPageView();
-            };
 
-            (function(d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s); js.id = id;
-                js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1";
-                fjs.parentNode.insertBefore(js, fjs);
+            
+            @media only screen and (max-width: 768px) {
+                #aside {
+                    display: none;
+                }
+                #header-image {
+                    max-height: 32rem;
+                }
+                #engage-users,
+                #comments,
+                #article,
+                #leaderboard,
+                #banner-phone1 {
+                    width: 96%;
+                }
+                #banner-phone {
+                    width: 100%;
+                }
             }
-            (document, 'script', 'facebook-jssdk'));
-        </script>
-        <script type="text/javascript">
-            var infolinks_pid = 3048885;
-            var infolinks_wsid = 0;
-        </script>
-        <script type="text/javascript" src="http://resources.infolinks.com/js/infolinks_main.js"></script>
+
+            @media only screen and (max-width: 425px) {
+                #aside {
+                    display: none;
+                }
+                #header-image {
+                    max-height: 16rem;
+                }
+                #article-date {
+                    display: none;
+                }
+                img {
+                    max-width: 302px;
+                }
+                #blog-post-title {
+                    font-size: .75em;
+                    width: 96%;
+                }
+                #article {
+                    width: 96%;
+                }
+                #engage-users,
+                #comments,
+                #article,
+                #leaderboard,
+                #banner-phone1 {
+                    width: 96%;
+                }
+                #banner-phone {
+                    width: 100%;
+                }
+            }
+        </style>
     </head>
     <body>
         <!-- Sidebar Menu -->
@@ -271,6 +295,7 @@
         <div class="pusher">
             <main id="main" role="main">
                 <div id="article">
+                    <div class="ui mobile banner test ad" id="banner-phone" data-text="Banner" style="display:none;"></div>
                     <% include ../partials/article-view.ejs %>
                 </div>
                 <!-- Load Facebook SDK for JavaScript -->
@@ -294,6 +319,7 @@
                         </p>
                     </div>
                 </div>
+                <div class="ui banner test ad" id="banner-phone1" data-text="Banner" style="display:none;"></div>
                 <div class="ui card" id="comments">
                     <div class="ui minimal comments">
                         <h3 class="ui blue dividing header">
@@ -334,6 +360,7 @@
                         </form>
                     </div>
                 </div>
+                <div class="ui mobile leaderboard test ad" id="leaderboard" data-text="Mobile Leaderboard"></div>
             </main>
             <div id="aside">
                 <div class="ui medium rectangle ad" data-text="Medium Rectangle">
@@ -425,11 +452,26 @@
                     if(result.titlePic.length > 4) {
                         vm.ok = true;
                     }
-
-                    // Then fetch the author of the article
-                    socket.emit('users::get', result.authorId, (error, result) => {
-                        vm.author = result;
-                    });
+                });
+            } else if (Cookies.get('current-sobanuka-article-id') != 'undefined') {
+                socket.emit('posts::get', Cookies.get('current-sobanuka-article-id'), (error, result) => {
+                    // Assign result to the vm's article prop
+                    console.log(result);
+                    vm.article = result;
+                    vm.comments = result.comments;
+                    if(result.titlePic.length > 4) {
+                        vm.ok = true;
+                    }
+                });
+            } else {
+                socket.emit('posts::get', decodeURI(document.URL.split('?')[1].split('&')[0].split('title=')[1]), (error, result) => {
+                    // Assign result to the vm's article prop
+                    console.log(result);
+                    vm.article = result;
+                    vm.comments = result.comments;
+                    if(result.titlePic.length > 4) {
+                        vm.ok = true;
+                    }
                 });
             }
 
@@ -442,9 +484,7 @@
                 el: '#main',
                 data: {
                     article: {},
-                    author: {},
                     ok: false,
-                    beforeComments: `Niba wakunze iyi nkuru kanda ku mutima werekaneko wayikunze, yisangize abandi kuri Facebook cyangwa ugire icyo uyivugaho muri comment. ***Kutwereka ko mwishimiye ibyo twanditse ni inkunga ikomeye***. *Niba ufite icyo utasobanukiwe neza, igitekerezo cyangwa icyo ushaka ko tugusobanurira, cyandike muri comment turagerageza gusubiza vuba.*`,
                     comments: []
                 },
                 methods: {
@@ -464,15 +504,16 @@
                             case 12: return 'December';
                         }
                     },
-                    format: function(content, id) {
+                    format: function format(content) {
                         return marked(content);
                     },
-                    save: function() {
+                    save: function save() {
                         const comment = {
                             message: document.getElementById('input-body').value,
                             commenter: document.getElementById('input-name').value,
                             date: new Date().toLocaleString()
                         }
+                        
                         if (comment.commenter != '' & comment.message != '') {
                             socket.emit('posts::patch', vm.article._id, {comments: [ ...vm.article.comments, comment]}, (error, result) => {
                                 console.log(result);
@@ -480,7 +521,7 @@
                             });
                         }
                     },
-                    like: function({ _id }) {
+                    like: function like( _id ) {
                         if (!window.sessionStorage.getItem('liked-article-' + _id)) {
                             socket.emit('posts::patch', _id, {likes: vm.article.likes + 1}, (error, result) => {
                                 window.sessionStorage.setItem('liked-article-' + _id, true);
@@ -489,28 +530,69 @@
                         }
                     }
                 },
-                updated: function() {
+                updated: function updated() {
                     document.querySelector('title').innerText = this.article.title;
                     const meta = document.querySelectorAll('meta');
                     meta.item(3).setAttribute('content', document.URL);
                     meta.item(5).setAttribute('content', this.article.title);
                     meta.item(6).setAttribute('content', this.article.body);
-                    meta.item(7).setAttribute('content', 'http://localhost:3030' + document.getElementById('header-image').getAttribute('src').split('..')[1]);
+                    meta.item(7).setAttribute('content', 'https://quiet-everglades-90792.herokuapp.com' + document.getElementById('header-image').getAttribute('src').split('..')[1]);
                     document.getElementById('fb-share-button').setAttribute('data-href', document.URL);
 
-                    Caman("#header-image", function () {
+                    Caman("#header-image", function() {
                         this.brightness(10);
                         this.contrast(20);
                         this.vibrance(0);
-                        this.channels({ red: 0, green: 0, blue: 0 })
+                        this.channels({ red: 0, green: 0, blue: 0 });
                         this.render(function () {
                             console.log("Done!");
                         });
                     });
 
                     emergence.init();
+
+                    if (document.documentElement.clientWidth <= 768) {
+
+                        let phoneBannerTop = document.getElementById('banner-phone');
+                        let phoneBannerTop1 = document.getElementById('banner-phone1');
+                        let leaderboard = document.getElementById('leaderboard');
+
+                        phoneBannerTop.style.display = 'block';
+                        phoneBannerTop1.style.display = 'block';
+                        leaderboard.style.display = 'block';
+
+                        if (document.documentElement.clientWidth === 768) {
+                            leaderboard.classList.remove('mobile');
+                            leaderboard.setAttribute('data-text', 'Leaderboard');
+                        }
+                    }
                 }
             });
         </script>
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({
+                    appId: '126825084550011',
+                    cookie: true,
+                    xfbml: true,
+                    version: '2.9'
+                });
+                FB.AppEvents.logPageView();
+            };
+
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1";
+                fjs.parentNode.insertBefore(js, fjs);
+            }
+            (document, 'script', 'facebook-jssdk'));
+        </script>
+        <script type="text/javascript">
+            var infolinks_pid = 3048885;
+            var infolinks_wsid = 0;
+        </script>
+        <script type="text/javascript" src="https://resources.infolinks.com/js/infolinks_main.js"></script>
     </body>
 </html>

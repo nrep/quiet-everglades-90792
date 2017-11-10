@@ -1,4 +1,4 @@
-<article class="ui fluid card">
+<article class="ui fluid stacked segment">
     <img class="ui fluid image" id="header-image" v-bind:src="'../uploads/' + article.titlePic">
     <div class="ui fluid grid">
         <div class="ui left aligned column" id="blog-post-title">
@@ -23,7 +23,7 @@
     </div>
     <div id="body" v-html="format(article.body)"></div>
     <div class="ui equal height equal width grid" id="actions">
-        <a class="column" v-on:click="like(article._id)">
+        <a class="column" v-on:click="like(article)">
             <div class="center aligned text content">
                 <i class="like icon"></i>
                 Like

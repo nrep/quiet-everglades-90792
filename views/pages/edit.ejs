@@ -8,7 +8,7 @@
 
         <!-- Site Properties -->
         <title>New Post - Sobanuka</title>
-        <link rel="stylesheet" type="text/css" href="../libs/semantic-ui-css/semantic.css"/>
+        <link rel="stylesheet" type="text/css" href="../libs/semantic-ui-css/semantic.min.css"/>
         <link rel="stylesheet" type="text/css" href="../styles/jquery.tagsinput.css" />
         <link rel="stylesheet" href="../libs/dropzone/mi/dropzone.min.css">
 
@@ -195,21 +195,19 @@
         // Reference to DOM elements
         const saveBtn = document.getElementById('save-btn');
         const titleInput = document.getElementById('input-title');
-        const descriptionInput = document.getElementById('input-description');
         const bodyInput = document.getElementById('input-body');
         const tagsInput = document.getElementById('tags');
         const previewBtn = document.getElementById('preview-btn');
 
         // Array to store ids of all related pics
         let allPicsIds = [];
+        // Initialize a variable to store the title pic's id
+        let titlePicId = '';
 
         // Id of the article to edit
         const articleId = window.localStorage.getItem('article_id_to_edit');
         // The article itself
         let article = {};
-
-        // Initialize a variable to store the title pic's id
-        let titlePicId = '';
 
         // Then after all the initializations
         // Chek if there is an article to edit
@@ -319,7 +317,7 @@
             // Initialize the array
             let topicsArray = [];
             // Iterate over an array containing tags-input values
-            for (let i = 0; i < tagsInputValues(); i++) {
+            for (let i = 0; i < tagsInputValues().length; i++) {
                 // Create an object named topic containing:
                 const topic = {
                     // A message property that stores the value at index i
@@ -355,7 +353,6 @@
             socket.emit('posts::patch', _id, {
                 title: titleInput.value,
                 titlePic: titlePicId || uploadedFileIds[0],
-                description: descriptionInput.value,
                 body: bodyInput.value,
                 topics: getTopics(),
                 updatedOn: {
