@@ -111,7 +111,15 @@ app.get('/', function(req, res, next) {
 // Set up Plugins and providers
 app.configure(hooks());
 app.configure(rest());
-app.configure(socketio());
+app.configure(socketio(function(io) {
+    io.on('connection', function(socket) {
+        console.log('A user is connected');
+        socket.on('disconnect', () => {
+            console.log('A user is disconnected');
+        });
+        socket.emit('news', {text: 'i'});
+    });
+}));
 
 app.use('/uploads',
     // multer parses the file named 'uri'.	
